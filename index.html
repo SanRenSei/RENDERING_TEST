@@ -1,0 +1,64 @@
+<html>
+<head>
+  <style>
+    img {
+      display:none;
+    }
+  </style>
+</head>
+<img src="bunny.png" id="bunny" />
+<canvas width="1000" height="1000" id="mainCanvas" />
+<script>
+let ctx = mainCanvas.getContext('2d');
+let bunnies = [];
+let animationIndex = 0;
+let startTime = new Date().getTime();
+let frames = 0;
+let updateingTime = 0;
+let drawingTime = 0;
+
+let addBunny = () => {
+  bunnies.push({x:250*Math.random()+500, y:250+500*Math.random(), dx:0, dy:0, lastUpdate: new Date().getTime()});
+}
+
+let update = () => {
+  let start = new Date().getTime();
+  for (let i=0;i<bunnies.length;i++) {
+    bunnies[i].x += 0.02*bunnies[i].dx;
+    bunnies[i].y += 0.02*bunnies[i].dy;
+    bunnies[i].dy -= 1;
+    if (bunnies[i].y<0) {
+      bunnies[i].y = -bunnies[i].y;
+      bunnies[i].dy = Math.abs(bunnies[i].dy)+100*Math.random()-50;
+      bunnies[i].dx = 200*Math.random()-100;
+    }
+    if (bunnies[i].x<0) {
+      bunnies[i].x = 1000-bunnies[i].x;
+    }
+  }
+  updateingTime += new Date().getTime() - start;
+  draw();
+}
+
+let draw = () => {
+  let start = new Date().getTime();
+  frames++;
+  ctx.clearRect(0, 0, 1000, 1000);
+  for (let i=0;i<bunnies.length;i++) {
+    ctx.drawImage(bunny,bunnies[i].x%1000,bunnies[i].y, 50, 50);
+  }
+  drawingTime += new Date().getTime() - start;
+  setTimeout(update, 0);
+}
+
+let getFPS = () => {
+  return 1000*frames/(new Date().getTime()-startTime);
+}
+
+for (let i=0;i<5500;i++) {
+  addBunny();
+}
+startTime = new Date().getTime();
+draw();
+</script>
+</html>
